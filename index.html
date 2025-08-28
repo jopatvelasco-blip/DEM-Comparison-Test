@@ -111,7 +111,9 @@
                     <div class="flex items-center"><input id="gcp8" name="gcp-option" type="checkbox" value="Checkpoint AeroPoint, bad fix" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp8" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/pTYsZkbS/7.png" alt="Checkpoint, AP, bad" class="gcp-icon"><p>Checkpoint AeroPoint, bad fix</p></label></div>
                 </div>
             </div>
-            <button id="process-screenshot-btn" type="button" class="w-full mt-4 px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">Process from Screenshot</button>
+            <div id="paste-bin" class="paste-bin w-full my-4" contenteditable="true" tabindex="0">
+                <p class="text-sm">Click or paste your screenshot here...</p>
+            </div>
             <button type="submit" class="w-full mt-4 px-4 py-2 bg-[#ffdd00] text-gray-900 font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffdd00] transition-colors">Generate Report</button>
         </form>
     </div>
@@ -172,14 +174,15 @@
         const downloadBtn = document.getElementById('download-btn');
         const gcpCheckboxes = document.querySelectorAll('input[name="gcp-option"]');
         const processScreenshotBtn = document.getElementById('process-screenshot-btn');
+        const pasteBin = document.getElementById('paste-bin');
         const canvas = document.getElementById('drawing-canvas');
         const ctx = canvas.getContext('2d');
         const clearCanvasBtn = document.getElementById('clear-canvas-btn');
         let isDrawing = false;
         let startX, startY;
 
-        const legends = { ft: { strict: [{r:'-3.3ft (US)',c:'bg-legend-pink'},{r:'-0.7ft (US)',c:'bg-legend-peach'},{r:'-0.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.3ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-purple'},{r:'3.3ft (US)',c:'bg-legend-green'}], moderate: [{r:'-6.6ft (US)',c:'bg-legend-pink'},{r:'-1.3ft (US)',c:'bg-legend-peach'},{r:'-0.7ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-purple'},{r:'6.6ft (US)',c:'bg-legend-green'}], lenient: [{r:'-13.1ft (US)',c:'bg-legend-pink'},{r:'-2.6ft (US)',c:'bg-legend-peach'},{r:'-1.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-gray'},{r:'2.6ft (US)',c:'bg-legend-purple'},{r:'13.1ft (US)',c:'bg-legend-green'}] }, meters: { strict: [{r:'-1.0m',c:'bg-legend-pink'},{r:'-0.2m',c:'bg-legend-peach'},{r:'-0.1m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.1m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-purple'},{r:'1.0m',c:'bg-legend-green'}], moderate: [{r:'-2.0m',c:'bg-legend-pink'},{r:'-0.4m',c:'bg-legend-peach'},{r:'-0.2m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-purple'},{r:'2.0m',c:'bg-legend-green'}], lenient: [{r:'-4.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-gray'},{r:'0.8m',c:'bg-legend-purple'},{r:'4.0m',c:'bg-legend-green'}] } };
-        const notes = { ft: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" }, meters: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" } };
+        const legends = { ft: { strict: [{r:'-3.3ft (US)',c:'bg-legend-pink'},{r:'-0.7ft (US)',c:'bg-legend-peach'},{r:'-0.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.3ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-purple'},{r:'3.3ft (US)',c:'bg-legend-green'}], moderate: [{r:'-6.6ft (US)',c:'bg-legend-pink'},{r:'-1.3ft (US)',c:'bg-legend-peach'},{r:'-0.7ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-purple'},{r:'6.6ft (US)',c:'bg-legend-green'}], lenient: [{r:'-13.1ft (US)',c:'bg-legend-pink'},{r:'-2.6ft (US)',c:'bg-legend-peach'},{r:'-1.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'1.31ft (US)',c:'bg-legend-gray'},{r:'2.6ft (US)',c:'bg-legend-purple'},{r:'13.1ft (US)',c:'bg-legend-green'}] }, meters: { strict: [{r:'-1.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.1m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-purple'},{r:'1.0m',c:'bg-legend-green'}], moderate: [{r:'-2.0m',c:'bg-legend-pink'},{r:'-0.4m',c:'bg-legend-peach'},{r:'-0.2m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-purple'},{r:'2.0m',c:'bg-legend-green'}], lenient: [{r:'-4.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-gray'},{r:'0.8m',c:'bg-legend-purple'},{r:'4.0m',c:'bg-legend-green'}] } };
+        const notes = { ft: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" }, meters: { strict: "Color means more than 100mm | 0.1m of change", moderate: "Color means more than 200mm | 0.2m of change", lenient: "Color means more than 400mm | 0.4m of change" } };
         const gcps_images = {
             "Control AeroPoint, good fix, used, known point": "https://i.postimg.cc/Vv9PXXDs/1.png", "Control AeroPoint, good fix, unused": "https://i.postimg.cc/bvSMQQvX/2.png",
             "Control AeroPoint, bad fix, unused": "https://i.postimg.cc/kGJfh87g/8.png", "Control, used": "https://i.postimg.cc/5N9RPctS/3.png",
@@ -233,48 +236,37 @@
             }
         };
 
-        processScreenshotBtn.addEventListener('click', async () => {
-            const tempDiv = document.createElement('div');
-            document.body.appendChild(tempDiv);
-            tempDiv.setAttribute('contenteditable', 'true');
-            tempDiv.focus();
+        document.addEventListener('paste', async (e) => {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    e.preventDefault();
+                    // Show a temporary loading message
+                    const loadingMessage = document.createElement('div');
+                    loadingMessage.textContent = 'Processing screenshot...';
+                    loadingMessage.className = 'text-center text-white fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50';
+                    document.body.appendChild(loadingMessage);
 
-            const loadingMessage = document.createElement('div');
-            loadingMessage.textContent = 'Please paste your screenshot (Ctrl+V) here...';
-            loadingMessage.className = 'text-center text-white';
-            setupForm.appendChild(loadingMessage);
-
-            tempDiv.addEventListener('paste', async (e) => {
-                const items = e.clipboardData.items;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        e.preventDefault();
-                        loadingMessage.textContent = 'Processing screenshot...';
-                        const file = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = async (event) => {
-                            const base64Data = event.target.result.split(',')[1];
-                            const reportData = await processImageWithVisionAPI(base64Data);
-                            if (reportData) {
-                                document.getElementById('form-survey-a').value = reportData.surveyA || '';
-                                document.getElementById('form-survey-b').value = reportData.surveyB || '';
-                                document.getElementById('form-site-name').value = reportData.site || '';
-                                document.getElementById('form-qa-select').value = reportData.qa?.toLowerCase() || 'strict';
-                                document.getElementById('form-units-select').value = reportData.units?.toLowerCase().includes('ft') ? 'ft' : 'meters';
-                            }
-                            loadingMessage.textContent = 'Done!';
-                            setTimeout(() => {
-                                document.body.removeChild(tempDiv);
-                                setupForm.removeChild(loadingMessage);
-                            }, 1000);
-                        };
-                        reader.readAsDataURL(file);
-                        break;
-                    }
+                    const file = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        const base64Data = event.target.result.split(',')[1];
+                        const reportData = await processImageWithVisionAPI(base64Data);
+                        if (reportData) {
+                            document.getElementById('form-survey-a').value = reportData.surveyA || '';
+                            document.getElementById('form-survey-b').value = reportData.surveyB || '';
+                            document.getElementById('form-site-name').value = reportData.site || '';
+                            document.getElementById('form-qa-select').value = reportData.qa?.toLowerCase() || 'strict';
+                            document.getElementById('form-units-select').value = reportData.units?.toLowerCase().includes('ft') ? 'ft' : 'meters';
+                        }
+                        document.body.removeChild(loadingMessage);
+                    };
+                    reader.readAsDataURL(file);
+                    break;
                 }
-            });
+            }
         });
-
+        
         reportDetailsForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const qa = document.getElementById('form-qa-select').value;
