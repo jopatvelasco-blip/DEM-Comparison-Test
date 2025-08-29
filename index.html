@@ -93,7 +93,7 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium">GCPs used <span class="font-normal text-gray-400">(Choose up to 3)</span></label>
+                <label class="block text-sm font-medium">GCPs used <span class="font-normal text-gray-400">(Choose as many as you want)</span></label>
                 <div id="gcp-checkbox-group" class="mt-2 space-y-2">
                     <div class="flex items-center"><input id="gcp1" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp1" class="ml-3 text-sm text-white">Control AeroPoint, good fix, used, known point</label></div>
                     <div class="flex items-center"><input id="gcp2" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp2" class="ml-3 text-sm text-white">Control AeroPoint, good fix, unused</label></div>
@@ -191,7 +191,7 @@
         // --- Event Listeners and Functions ---
         gcpCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
-                if (document.querySelectorAll('input[name="gcp-option"]:checked').length > 3) checkbox.checked = false;
+                if (document.querySelectorAll('input[name="gcp-option"]:checked').length > 8) checkbox.checked = false;
             });
         });
 
