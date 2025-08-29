@@ -14,19 +14,21 @@
             font-family: 'Montserrat', sans-serif;
             background-color: #000000;
         }
-        #report-container, #setup-form, #final-output {
+        /* Report container with responsive dimensions */
+        #report-container {
             width: 100%;
-            max-width: 1920px;
+            max-width: 3840px;
             height: auto;
             background-color: #000000;
             border-radius: 1rem;
             padding: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
+        /* Map container fixed dimensions */
         .map-container-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 56.25%;
+            padding-top: 56.25%; /* 1080 / 1920 = 56.25% */
             border: 3px solid #ffdd00;
         }
         .map-container {
@@ -41,31 +43,27 @@
             background-position: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #111827; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827; /* bg-gray-900 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* bg-gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* bg-gray-500 */
+            cursor: pointer;
+        }
+        /* Custom legend colors */
         .bg-legend-pink { background-color: #fe8081; }
         .bg-legend-peach { background-color: #ffbf81; }
         .bg-legend-gray { background-color: #d3d3d3; }
         .bg-legend-purple { background-color: #807ffe; }
         .bg-legend-green { background-color: #81ff81; }
-        .gcp-icon { height: 1.5rem; width: 1.5rem; object-fit: contain; }
-        .paste-bin {
-            border: 2px dashed #4b5563;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-            min-height: 50px;
-            cursor: pointer;
-            color: #d1d5db;
-            transition: all 0.2s ease-in-out;
-        }
-        .paste-bin:focus, .paste-bin:hover {
-            border-color: #ffdd00;
-            color: #ffdd00;
-            outline: none;
-        }
     </style>
 </head>
 <body>
@@ -75,12 +73,8 @@
         <h2 class="text-3xl font-semibold text-[#ffdd00] mb-6 text-center">Setup Report Details</h2>
         <form id="report-details-form" class="space-y-4">
             <div>
-                <label for="form-survey-a" class="block text-sm font-medium">Survey A</label>
-                <input type="text" id="form-survey-a" placeholder="e.g., 2025_02_03 B" class="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white shadow-sm focus:ring-[#ffdd00] focus:border-[#ffdd00] p-2 transition-colors">
-            </div>
-            <div>
-                <label for="form-survey-b" class="block text-sm font-medium">Survey B</label>
-                <input type="text" id="form-survey-b" placeholder="e.g., Belmont 2025_01_16 B" class="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white shadow-sm focus:ring-[#ffdd00] focus:border-[#ffdd00] p-2 transition-colors">
+                <label for="form-survey-names" class="block text-sm font-medium">Survey Names</label>
+                <input type="text" id="form-survey-names" placeholder="e.g., 2025_02_03 B vs Belmont 2025_01_16 B" class="mt-1 block w-full rounded-md border-gray-700 bg-gray-800 text-white shadow-sm focus:ring-[#ffdd00] focus:border-[#ffdd00] p-2 transition-colors">
             </div>
             <div>
                 <label for="form-site-name" class="block text-sm font-medium">Site</label>
@@ -101,26 +95,24 @@
             <div>
                 <label class="block text-sm font-medium">GCPs used <span class="font-normal text-gray-400">(Choose up to 3)</span></label>
                 <div id="gcp-checkbox-group" class="mt-2 space-y-2">
-                    <div class="flex items-center"><input id="gcp1" name="gcp-option" type="checkbox" value="Control AeroPoint, good fix, used, known point" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp1" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/Vv9PXXDs/1.png" alt="AP, good" class="gcp-icon"><p>Control AeroPoint, good fix, used, known point</p></label></div>
-                    <div class="flex items-center"><input id="gcp2" name="gcp-option" type="checkbox" value="Control AeroPoint, good fix, unused" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp2" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/bvSMQQvX/2.png" alt="AP, good, unused" class="gcp-icon"><p>Control AeroPoint, good fix, unused</p></label></div>
-                    <div class="flex items-center"><input id="gcp3" name="gcp-option" type="checkbox" value="Control AeroPoint, bad fix, unused" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp3" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/kGJfh87g/8.png" alt="AP, bad" class="gcp-icon"><p>Control AeroPoint, bad fix, unused</p></label></div>
-                    <div class="flex items-center"><input id="gcp4" name="gcp-option" type="checkbox" value="Control, used" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp4" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/5N9RPctS/3.png" alt="Control, used" class="gcp-icon"><p>Control, used</p></label></div>
-                    <div class="flex items-center"><input id="gcp5" name="gcp-option" type="checkbox" value="Control, unused" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp5" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/tJpMQwNy/4.png" alt="Control, unused" class="gcp-icon"><p>Control, unused</p></label></div>
-                    <div class="flex items-center"><input id="gcp6" name="gcp-option" type="checkbox" value="Checkpoint" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp6" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/JnwFKGys/5.png" alt="Checkpoint" class="gcp-icon"><p>Checkpoint</p></label></div>
-                    <div class="flex items-center"><input id="gcp7" name="gcp-option" type="checkbox" value="Checkpoint AeroPoint, good fix" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp7" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/BvFY84h4/6.png" alt="Checkpoint, AP, good" class="gcp-icon"><p>Checkpoint AeroPoint, good fix</p></label></div>
-                    <div class="flex items-center"><input id="gcp8" name="gcp-option" type="checkbox" value="Checkpoint AeroPoint, bad fix" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp8" class="ml-3 text-sm text-white flex items-center gap-1"><img src="https://i.postimg.cc/pTYsZkbS/7.png" alt="Checkpoint, AP, bad" class="gcp-icon"><p>Checkpoint AeroPoint, bad fix</p></label></div>
+                    <div class="flex items-center"><input id="gcp1" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp1" class="ml-3 text-sm text-white">Control AeroPoint, good fix, used, known point</label></div>
+                    <div class="flex items-center"><input id="gcp2" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp2" class="ml-3 text-sm text-white">Control AeroPoint, good fix, unused</label></div>
+                    <div class="flex items-center"><input id="gcp3" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp3" class="ml-3 text-sm text-white">Control AeroPoint, bad fix, unused</label></div>
+                    <div class="flex items-center"><input id="gcp4" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp4" class="ml-3 text-sm text-white">Control, used</label></div>
+                    <div class="flex items-center"><input id="gcp5" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp5" class="ml-3 text-sm text-white">Control, unused</label></div>
+                    <div class="flex items-center"><input id="gcp6" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp6" class="ml-3 text-sm text-white">Checkpoint</label></div>
+                    <div class="flex items-center"><input id="gcp7" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp7" class="ml-3 text-sm text-white">Checkpoint AeroPoint, good fix</label></div>
+                    <div class="flex items-center"><input id="gcp8" name="gcp-option" type="checkbox" class="h-4 w-4 rounded border-gray-500 bg-gray-700 text-[#ffdd00] focus:ring-[#ffdd00]"><label for="gcp8" class="ml-3 text-sm text-white">Checkpoint AeroPoint, bad fix</label></div>
+
                 </div>
             </div>
-            <div id="paste-bin" class="paste-bin w-full my-4" contenteditable="true" tabindex="0">
-                <p class="text-sm">Click or paste your screenshot here...</p>
-            </div>
-            <button type="submit" class="w-full mt-4 px-4 py-2 bg-[#ffdd00] text-gray-900 font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffdd00] transition-colors">Generate Report</button>
+            <button type="submit" class="w-full px-4 py-2 bg-[#ffdd00] text-gray-900 font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#ffdd00] transition-colors">Generate Report</button>
         </form>
     </div>
 
     <!-- Report Container (initially hidden) -->
     <div id="report-container" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 items-start" style="display:none;">
-        <div class="order-1 md:order-1 flex flex-col justify-start p-8">
+        <div class="order-1 md:order-1 flex flex-col justify-center p-8">
             <header class="mb-4 text-center">
                 <h1 class="text-[40px] font-semibold text-[#ffdd00]">DEM Comparison</h1>
                 <div class="flex items-center justify-center gap-2 font-semibold text-sm text-white flex-wrap">
@@ -135,7 +127,7 @@
             <div class="mb-4"><div id="color-legend" class="flex items-end justify-center flex-wrap w-full"></div></div>
             <div id="display-gcp-list" class="space-y-1 text-sm mb-4"></div>
             <div class="space-y-1 text-xs mb-4"><p id="legend-note" class="text-[#ffdd00] font-medium mt-2 text-center"></p></div>
-            <button id="back-btn" class="w-full mt-4 px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700">Change Settings</button>
+            <button id="back-btn" class="w-full mt-[12rem] px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700">Change Settings</button>
         </div>
 
         <div class="order-2 p-8">
@@ -144,7 +136,7 @@
                     <canvas id="drawing-canvas"></canvas>
                 </div>
             </div>
-            <div class="mt-4 flex flex-col gap-2">
+            <div class="mt-[12rem] flex flex-col gap-2">
                 <label for="map-input" class="block text-sm font-medium text-white">Paste Image URL or Paste from Clipboard</label>
                 <div class="flex gap-2">
                     <input type="text" id="map-input" placeholder="Paste image URL or Ctrl+V here" class="flex-grow p-2 block w-full rounded-md border-gray-700 bg-gray-800 text-white shadow-sm focus:ring-[#ffdd00] focus:border-[#ffdd00]">
@@ -157,6 +149,7 @@
     </div>
 
     <script>
+        // --- DOM Elements ---
         const setupForm = document.getElementById('setup-form');
         const reportContainer = document.getElementById('report-container');
         const reportDetailsForm = document.getElementById('report-details-form');
@@ -173,23 +166,29 @@
         const displayGcpList = document.getElementById('display-gcp-list');
         const downloadBtn = document.getElementById('download-btn');
         const gcpCheckboxes = document.querySelectorAll('input[name="gcp-option"]');
-        const processScreenshotBtn = document.getElementById('process-screenshot-btn');
-        const pasteBin = document.getElementById('paste-bin');
         const canvas = document.getElementById('drawing-canvas');
         const ctx = canvas.getContext('2d');
         const clearCanvasBtn = document.getElementById('clear-canvas-btn');
         let isDrawing = false;
         let startX, startY;
 
-        const legends = { ft: { strict: [{r:'-3.3ft (US)',c:'bg-legend-pink'},{r:'-0.7ft (US)',c:'bg-legend-peach'},{r:'-0.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.3ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-purple'},{r:'3.3ft (US)',c:'bg-legend-green'}], moderate: [{r:'-6.6ft (US)',c:'bg-legend-pink'},{r:'-1.3ft (US)',c:'bg-legend-peach'},{r:'-0.7ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-purple'},{r:'6.6ft (US)',c:'bg-legend-green'}], lenient: [{r:'-13.1ft (US)',c:'bg-legend-pink'},{r:'-2.6ft (US)',c:'bg-legend-peach'},{r:'-1.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'1.31ft (US)',c:'bg-legend-gray'},{r:'2.6ft (US)',c:'bg-legend-purple'},{r:'13.1ft (US)',c:'bg-legend-green'}] }, meters: { strict: [{r:'-1.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.1m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-purple'},{r:'1.0m',c:'bg-legend-green'}], moderate: [{r:'-2.0m',c:'bg-legend-pink'},{r:'-0.4m',c:'bg-legend-peach'},{r:'-0.2m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-purple'},{r:'2.0m',c:'bg-legend-green'}], lenient: [{r:'-4.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-gray'},{r:'0.8m',c:'bg-legend-purple'},{r:'4.0m',c:'bg-legend-green'}] } };
-        const notes = { ft: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" }, meters: { strict: "Color means more than 100mm | 0.1m of change", moderate: "Color means more than 200mm | 0.2m of change", lenient: "Color means more than 400mm | 0.4m of change" } };
+        // --- Data ---
+        const legends = { ft: { strict: [{r:'-3.3ft (US)',c:'bg-legend-pink'},{r:'-0.7ft (US)',c:'bg-legend-peach'},{r:'-0.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.3ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-purple'},{r:'3.3ft (US)',c:'bg-legend-green'}], moderate: [{r:'-6.6ft (US)',c:'bg-legend-pink'},{r:'-1.3ft (US)',c:'bg-legend-peach'},{r:'-0.7ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'0.7ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-purple'},{r:'6.6ft (US)',c:'bg-legend-green'}], lenient: [{r:'-13.1ft (US)',c:'bg-legend-pink'},{r:'-2.6ft (US)',c:'bg-legend-peach'},{r:'-1.3ft (US)',c:'bg-legend-gray'},{r:'0.0ft (US)',c:'bg-legend-gray'},{r:'1.3ft (US)',c:'bg-legend-gray'},{r:'2.6ft (US)',c:'bg-legend-purple'},{r:'13.1ft (US)',c:'bg-legend-green'}] }, meters: { strict: [{r:'-1.0m',c:'bg-legend-pink'},{r:'-0.2m',c:'bg-legend-peach'},{r:'-0.1m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.1m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-purple'},{r:'1.0m',c:'bg-legend-green'}], moderate: [{r:'-2.0m',c:'bg-legend-pink'},{r:'-0.4m',c:'bg-legend-peach'},{r:'-0.2m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.2m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-purple'},{r:'2.0m',c:'bg-legend-green'}], lenient: [{r:'-4.0m',c:'bg-legend-pink'},{r:'-0.8m',c:'bg-legend-peach'},{r:'-0.4m',c:'bg-legend-gray'},{r:'0.0m',c:'bg-legend-gray'},{r:'0.4m',c:'bg-legend-gray'},{r:'0.8m',c:'bg-legend-purple'},{r:'4.0m',c:'bg-legend-green'}] } };
+        const notes = { ft: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" }, meters: { strict: "Color means more than 100mm | 0.33' of change", moderate: "Color means more than 200mm | 0.66' of change", lenient: "Color means more than 400mm | 1.31' of change" } };
+        
+        // GCP image URLs
         const gcps_images = {
-            "Control AeroPoint, good fix, used, known point": "https://i.postimg.cc/Vv9PXXDs/1.png", "Control AeroPoint, good fix, unused": "https://i.postimg.cc/bvSMQQvX/2.png",
-            "Control AeroPoint, bad fix, unused": "https://i.postimg.cc/kGJfh87g/8.png", "Control, used": "https://i.postimg.cc/5N9RPctS/3.png",
-            "Control, unused": "https://i.postimg.cc/tJpMQwNy/4.png", "Checkpoint": "https://i.postimg.cc/JnwFKGys/5.png",
-            "Checkpoint AeroPoint, good fix": "https://i.postimg.cc/BvFY84h4/6.png", "Checkpoint AeroPoint, bad fix": "https://i.postimg.cc/pTYsZkbS/7.png"
+            "Control AeroPoint, good fix, used, known point": "https://i.postimg.cc/Vv9PXXDs/1.png",
+            "Control AeroPoint, good fix, unused": "https://i.postimg.cc/bvSMQQvX/2.png",
+            "Control AeroPoint, bad fix, unused": "https://i.postimg.cc/kGJfh87g/8.png",
+            "Control, used": "https://i.postimg.cc/5N9RPctS/3.png",
+            "Control, unused": "https://i.postimg.cc/tJpMQwNy/4.png",
+            "Checkpoint": "https://i.postimg.cc/JnwFKGys/5.png",
+            "Checkpoint AeroPoint, good fix": "https://i.postimg.cc/BvFY84h4/6.png",
+            "Checkpoint AeroPoint, bad fix": "https://i.postimg.cc/pTYsZkbS/7.png"
         };
 
+        // --- Event Listeners and Functions ---
         gcpCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 if (document.querySelectorAll('input[name="gcp-option"]:checked').length > 3) checkbox.checked = false;
@@ -206,94 +205,45 @@
             });
             colorLegend.appendChild(cBar); colorLegend.appendChild(lCon); legendNote.textContent = notes[u][qa];
         };
-
-        const processImageWithVisionAPI = async (base64ImageData) => {
-            const prompt = "Extract the following details from the image: Survey A (Big bold text at the left above Captured), Survey B (Big bold text at the right above Captured), Site (the FULL TEXT in the bold text at the top), Quality Assurance (QA) and Units (ft(US) or meters). Return only a JSON object with keys 'surveyA', 'surveyB', 'site', 'qa', and 'units'.";
-            const payload = {
-                contents: [{
-                    role: "user",
-                    parts: [{ text: prompt }, { inlineData: { mimeType: "image/png", data: base64ImageData } }]
-                }],
-                generationConfig: { responseMimeType: "application/json" }
-            };
-            const apiKey = "AIzaSyAW_khLR-qN6tBcZwDUl-At_vDJt095kRE"; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`API call failed: ${response.statusText}`);
-                const result = await response.json();
-                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!jsonText) throw new Error("No content in API response.");
-                return JSON.parse(jsonText);
-            } catch (error) {
-                console.error("Error processing image with Vision API:", error);
-                return null;
-            }
-        };
-
-        document.addEventListener('paste', async (e) => {
-            const items = e.clipboardData.items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    e.preventDefault();
-                    // Show a temporary loading message
-                    const loadingMessage = document.createElement('div');
-                    loadingMessage.textContent = 'Processing screenshot...';
-                    loadingMessage.className = 'text-center text-white fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50';
-                    document.body.appendChild(loadingMessage);
-
-                    const file = items[i].getAsFile();
-                    const reader = new FileReader();
-                    reader.onload = async (event) => {
-                        const base64Data = event.target.result.split(',')[1];
-                        const reportData = await processImageWithVisionAPI(base64Data);
-                        if (reportData) {
-                            document.getElementById('form-survey-a').value = reportData.surveyA || '';
-                            document.getElementById('form-survey-b').value = reportData.surveyB || '';
-                            document.getElementById('form-site-name').value = reportData.site || '';
-                            document.getElementById('form-qa-select').value = reportData.qa?.toLowerCase() || 'strict';
-                            document.getElementById('form-units-select').value = reportData.units?.toLowerCase().includes('ft') ? 'ft' : 'meters';
-                        }
-                        document.body.removeChild(loadingMessage);
-                    };
-                    reader.readAsDataURL(file);
-                    break;
-                }
-            }
-        });
         
         reportDetailsForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const qa = document.getElementById('form-qa-select').value;
             const u = document.getElementById('form-units-select').value;
             
-            const surveyA = document.getElementById('form-survey-a').value;
-            const surveyB = document.getElementById('form-survey-b').value;
-            const siteName = document.getElementById('form-site-name').value;
-            
-            document.getElementById('display-survey-names').textContent = `${surveyA} vs ${surveyB}`;
-            document.getElementById('display-site-name').textContent = siteName;
+            // Get values from the form
+            document.getElementById('display-survey-names').textContent = document.getElementById('form-survey-names').value;
+            document.getElementById('display-site-name').textContent = document.getElementById('form-site-name').value;
             document.getElementById('display-qa-level').textContent = qa.charAt(0).toUpperCase() + qa.slice(1);
             document.getElementById('display-units').textContent = u === 'ft' ? 'ft(US)' : 'meters';
             
+            // Populate legend and GCP list
             updateLegend(qa, u);
             const displayGcpList = document.getElementById('display-gcp-list');
             displayGcpList.innerHTML = '';
             document.querySelectorAll('input[name="gcp-option"]:checked').forEach(gcp => {
                 const label = document.querySelector(`label[for="${gcp.id}"]`);
-                const el = document.createElement('div');
-                el.className = 'flex items-center gap-1 text-sm text-white';
+                const el = document.createElement('div'); el.className = 'flex items-center gap-1 text-sm text-white';
                 const image_url = gcps_images[label.textContent];
-                el.innerHTML = `<img src="${image_url}" alt="${label.textContent}" class="h-6 w-6 object-contain"><p>${label.textContent}</p>`;
-                displayGcpList.appendChild(el);
+
+// Create the image safely with crossorigin
+const img = document.createElement("img");
+img.src = image_url;
+img.crossOrigin = "anonymous";   // 👈 important
+img.alt = label.textContent;
+img.className = "h-7 w-7 object-contain";
+
+// Create the label text
+const text = document.createElement("p");
+text.textContent = label.textContent;
+
+// Append them
+el.appendChild(img);
+el.appendChild(text);
+displayGcpList.appendChild(el);
+
             });
-            setupForm.style.display = 'none';
-            reportContainer.style.display = 'grid';
+            setupForm.style.display = 'none'; reportContainer.style.display = 'grid';
         });
 
         backBtn.addEventListener('click', () => { reportContainer.style.display = 'none'; setupForm.style.display = 'block'; });
@@ -302,46 +252,25 @@
             const mapContainer = document.getElementById('map-container');
             const mapContainerWrapper = document.querySelector('.map-container-wrapper');
             const img = new Image();
+
             img.onload = function() {
                 const aspectRatio = this.width / this.height;
                 mapContainerWrapper.style.paddingTop = `${(1 / aspectRatio) * 100}%`;
+                
                 mapContainer.style.backgroundImage = `url('${dataUrl}')`;
                 mapContainer.textContent = '';
                 mapContainer.classList.remove('flex', 'items-center', 'justify-center', 'text-center', 'text-red-500');
             };
             img.src = dataUrl;
         };
-        
-        document.getElementById('map-input').addEventListener('paste', e => {
+        loadMapBtn.addEventListener('click', () => { if (mapInput.value.trim()) displayImage(mapInput.value.trim()); });
+        mapInput.addEventListener('paste', e => {
             const items = (e.clipboardData || window.clipboardData).items;
-            for (let i of items) {
-                if (i.type.indexOf('image') !== -1) {
-                    const f = i.getAsFile();
-                    const r = new FileReader();
-                    r.onload = e => displayImage(e.target.result);
-                    r.readAsDataURL(f);
-                }
-            }
-        });
-        
-        document.getElementById('load-map-btn').addEventListener('click', () => {
-            const inputValue = document.getElementById('map-input').value.trim();
-            if (inputValue) {
-                const tempImage = new Image();
-                tempImage.onload = () => displayImage(inputValue);
-                tempImage.onerror = () => {
-                    mapContainer.style.backgroundImage = 'none';
-                    mapContainer.textContent = 'Invalid image URL or failed to load.';
-                };
-                tempImage.src = inputValue;
-            } else {
-                mapContainer.style.backgroundImage = 'none';
-                mapContainer.textContent = 'Please enter a valid URL or paste image.';
-            }
+            for (let i of items) { if (i.type.indexOf('image') !== -1) { const f = i.getAsFile(); const r = new FileReader(); r.onload = e => displayImage(e.target.result); r.readAsDataURL(f); } }
         });
         
         downloadBtn.addEventListener('click', () => {
-     const reportContainer = document.getElementById('report-container');
+    const reportContainer = document.getElementById('report-container');
 
     // Temporarily hide the download button to prevent it from being in the screenshot
     downloadBtn.style.display = 'none';
@@ -352,25 +281,30 @@
     backButton.style.display = 'none';
     
     // Temporarily replace input fields with static text for a clean screenshot
-            const tempInputs = [];
-            document.querySelectorAll('#report-container input[type="text"]').forEach(input => {
-                const span = document.createElement('span');
-                span.textContent = input.value;
-                span.className = input.className;
-                input.parentNode.replaceChild(span, input);
-                tempInputs.push({ original: input, replacement: span });
-            });
-            const tempSelects = [];
-            document.querySelectorAll('#report-container select').forEach(select => {
-                const span = document.createElement('span');
-                span.textContent = select.options[select.selectedIndex].text;
-                span.className = 'text-white';
-                select.parentNode.replaceChild(span, select);
-                tempSelects.push({ original: select, replacement: span });
-            });
-           html2canvas(reportContainer, {
+    const tempInputs = [];
+    document.querySelectorAll('#report-container input[type="text"]').forEach(input => {
+        const span = document.createElement('span');
+        span.textContent = input.value;
+        span.className = input.className;
+        input.parentNode.replaceChild(span, input);
+        tempInputs.push({ original: input, replacement: span });
+    });
+    // Temporarily replace dropdowns with static text
+    const tempSelects = [];
+    document.querySelectorAll('#report-container select').forEach(select => {
+        const span = document.createElement('span');
+        span.textContent = select.options[select.selectedIndex].text;
+        span.className = 'text-white';
+        select.parentNode.replaceChild(span, select);
+        tempSelects.push({ original: select, replacement: span });
+    });
+    
+
+
+    html2canvas(reportContainer, {
         backgroundColor: '#000000', // Ensure a black background for the final image
-        scale: 2 // Increase scale for higher resolution
+        scale: 2 ,// Increase scale for higher resolution
+        useCORS: true
     }).then(canvas => {
         const link = document.createElement('a');
         link.download = 'dem-comparison-report.png';
@@ -396,4 +330,3 @@
     </script>
 </body>
 </html>
-
