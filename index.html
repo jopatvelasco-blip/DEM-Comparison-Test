@@ -64,6 +64,21 @@
         .bg-legend-gray { background-color: #d3d3d3; }
         .bg-legend-purple { background-color: #807ffe; }
         .bg-legend-green { background-color: #81ff81; }
+        .paste-bin:focus, .paste-bin:hover {
+    border-color: #ffdd00;
+    color: #ffdd00;
+    outline: none;
+}
+
+/* Annotation rectangle style */
+.annotation-rect {
+    position: absolute;
+    border: 2px dashed red;
+    cursor: move;
+    resize: both;
+    overflow: auto;
+}
+
     </style>
 </head>
 <body>
@@ -127,7 +142,12 @@
             <div class="mb-4"><div id="color-legend" class="flex items-end justify-center flex-wrap w-full"></div></div>
             <div id="display-gcp-list" class="space-y-1 text-sm mb-4"></div>
             <div class="space-y-1 text-xs mb-4"><p id="legend-note" class="text-[#ffdd00] font-medium mt-2 text-center"></p></div>
-            <button id="back-btn" class="w-full mt-4 px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700">Change Settings</button>
+            <!-- PNG icon below "Color means..." -->
+            <img 
+            src="https://i.postimg.cc/1X4rQKjP/Untitled-design-3.png" 
+            alt="Legend extra note" 
+            class="mx-auto mt-2 h-36 w-auto"
+            ><button id="back-btn" class="w-full mt-4 px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700">Change Settings</button>
         </div>
 
         <div class="order-2 p-8">
@@ -231,7 +251,7 @@
             img.src = gcps_images[label.textContent];
             img.crossOrigin = "anonymous";   // 👈 important
             img.alt = label.textContent;
-            img.className = "h-7 w-7 object-contain";
+            img.className = "h-7 w-7 object-contain align-middle translate-y-[6px]";
 
                 // Create the label text
             const text = document.createElement("p");
@@ -261,6 +281,74 @@
                 mapContainer.classList.remove('flex', 'items-center', 'justify-center', 'text-center', 'text-red-500');
             };
             img.src = dataUrl;
+            // --- Annotation Rectangles ---
+let creatingRect = false;
+let rect, startX, startY;
+
+mapContainer.addEventListener("mousedown", (e) => {
+  if (e.target !== mapContainer) return; // don't create on existing rects
+
+  creatingRect = true;
+  startX = e.offsetX;
+  startY = e.offsetY;
+
+  rect = document.createElement("div");
+  rect.className = "annotation-rect";
+  rect.style.left = `${startX}px`;
+  rect.style.top = `${startY}px`;
+  rect.style.width = "0px";
+  rect.style.height = "0px";
+  mapContainer.appendChild(rect);
+
+  function onMouseMove(ev) {
+    const currentX = ev.offsetX;
+    const currentY = ev.offsetY;
+    rect.style.width = `${Math.abs(currentX - startX)}px`;
+    rect.style.height = `${Math.abs(currentY - startY)}px`;
+    rect.style.left = `${Math.min(currentX, startX)}px`;
+    rect.style.top = `${Math.min(currentY, startY)}px`;
+  }
+
+  function onMouseUp() {
+    creatingRect = false;
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+
+    makeDraggable(rect);
+  }
+
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+});
+
+function makeDraggable(el) {
+  let offsetX, offsetY, isDown = false;
+
+  el.addEventListener("mousedown", (e) => {
+    if (e.target !== el) return; // allow resize handles
+    isDown = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+    document.addEventListener("mousemove", mouseMove);
+    document.addEventListener("mouseup", mouseUp);
+  });
+
+  function mouseMove(ev) {
+    if (!isDown) return;
+    const rect = el.parentNode.getBoundingClientRect();
+    const x = ev.clientX - rect.left - offsetX;
+    const y = ev.clientY - rect.top - offsetY;
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+  }
+
+  function mouseUp() {
+    isDown = false;
+    document.removeEventListener("mousemove", mouseMove);
+    document.removeEventListener("mouseup", mouseUp);
+  }
+}
+
         };
         loadMapBtn.addEventListener('click', () => { if (mapInput.value.trim()) displayImage(mapInput.value.trim()); });
         mapInput.addEventListener('paste', e => {
