@@ -16,7 +16,7 @@
         }
         #report-container, #setup-form, #final-output {
             width: 100%;
-            max-width: 3840px;
+            max-width: 7680px;
             height: auto;
             background-color: #000000;
             border-radius: 1rem;
@@ -68,7 +68,7 @@
         }
             .annotation-rect {
   position: absolute;
-  border: 2px dashed red;
+  border: 6px dashed red;
   cursor: move;
   resize: both;
   overflow: auto;
@@ -131,21 +131,21 @@
      style="display:none;">
         <div class="order-1 md:order-1 flex flex-col justify-start p-8">
             <header class="mb-4 text-center">
-                <h1 class="text-[40px] font-semibold text-[#ffdd00]">DEM Comparison</h1>
+                <h1 class="text-[45px] font-semibold text-[#ffdd00]">DEM Comparison</h1>
                 <div class="flex items-center justify-center gap-2 font-semibold text-sm text-white flex-wrap">
-                    <span id="display-survey-names" class="text-white"></span>
+                    <span id="display-survey-names" class="text-[20px] text-white"></span>
                 </div>
             </header>
             <div class="space-y-1 text-sm mb-4 text-center">
-                <div><strong class="text-[#ffdd00]">Site:</strong> <span id="display-site-name" class="text-white"></span></div>
-                <div><strong class="text-[#ffdd00]">Quality Assurance (QA):</strong> <span id="display-qa-level" class="text-white"></span></div>
-                <div><strong class="text-[#ffdd00]">Units:</strong> <span id="display-units" class="text-white"></span></div>
+                <div><strong class="text-[18px] text-[#ffdd00]">Site:</strong> <span id="display-site-name" class="text-[18px] text-white"></span></div>
+                <div><strong class="text-[18px] text-[#ffdd00]">Quality Assurance (QA):</strong> <span id="display-qa-level" class="text-[18px] text-white"></span></div>
+                <div><strong class="text-[18px] text-[#ffdd00]">Units:</strong> <span id="display-units" class="text-[18px] text-white"></span></div>
             </div>
 
             <div class="mb-4"><div id="color-legend" class="flex items-end justify-center flex-wrap w-full"></div>
            <div class="flex flex-col items-center space-y-2 mt-4">
-            <div id="display-gcp-list" class="space-y-1 text-sm mb-4"></div>
-            <div class="space-y-1 text-xs mb-4"><p id="legend-note" class="text-[#ffdd00] font-medium mt-2 text-center"></p>
+            <div id="display-gcp-list" class="text-[18px]space-y-1 text-sm mb-4"></div>
+            <div class="space-y-1 text-xs mb-4"><p id="legend-note" class="text-[15px] text-[#ffdd00] font-medium mt-2 text-center"></p>
             
             </div>
             <button id="back-btn" class="w-full mt-4 px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700">Change Settings</button>
@@ -304,7 +304,7 @@
             });
         });
 
-        const updateLegend = (qa, u) => {
+            const updateLegend = (qa, u) => {
             const legData = legends[u][qa];
             colorLegend.innerHTML = '';
 
@@ -328,7 +328,7 @@
 
                 // label (same width as swatch so they line up)
                 const label = document.createElement('div');
-                label.className = 'w-32 text-center leading-tight';
+                label.className = 'w-32 text-[15px] text-center leading-tight';
                 label.textContent = item.r;
                 labelRow.appendChild(label);
             });
